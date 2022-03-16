@@ -2,6 +2,8 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
+import authRoutes from './routes/auth.routes';
+
 // Initialitations
 const app = express();
 
@@ -19,6 +21,8 @@ app.use(cors());
 app.get('/', (req, res) => {    
     res.send(`API is at http://localhost:${app.get('port')}`);
 })
+
+app.use('/api/auth', authRoutes);
 
 
 export default app;
