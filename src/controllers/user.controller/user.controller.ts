@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express"
-import { creatUser } from "../../services/dbQueries/user.services.queries"
-import { createUserVal, userExistance } from "../../services/validations/user.validations/user.validations"
+import { creatUser, login } from "../../services/dbQueries/user.services.queries"
+import { createUserVal, userExistance } from "../../services/validations/user.validations/create.validations"
+import { loginVal } from "../../services/validations/user.validations/login.validations";
 
 /**
  * @description - SingUp Controller, create new user
@@ -22,7 +23,12 @@ const signUp =  async (req:Request, res:Response) => {
 }
 
 const signIn =  (req:Request, res:Response) => {
-    res.send("SignIn")
+    
+    let isValid:boolean = true; // isValid is true by default
+
+    isValid = loginVal(req.body, res);
+    isValid && login(req.body, res);
+
 }
 
 export {
