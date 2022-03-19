@@ -9,25 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.creatUser = void 0;
+exports.login = exports.creatUser = void 0;
 // import User from '../../models/user.model';// provide by moongose
-const pwdEncription_service_1 = require("../utils/pwdEncription.service");
+const pwdEncription_utils_1 = require("../utils/pwdEncription.utils");
+const token_utils_1 = require("../utils/token.utils");
 const { PrismaClient } = require('@prisma/client'); // provide by prisma
-const { user } = new PrismaClient();
+const prisma = new PrismaClient();
 /**
     * @description - This function is used to create a new user
     * and resolve the response to the client
-    * @param {object} req - The request object
+    * @param {object} args - Arguments from the client
     * @param {object} res - The response object
     * @returns {void} - Returns nothing
  */
 function creatUser(args, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log((0, pwdEncription_service_1.encryptedPWD)(args.password));
-        yield user.create({
+        yield prisma.user.create({
             data: {
                 email: args.email,
-                password: (0, pwdEncription_service_1.encryptedPWD)(args.password),
+                password: (0, pwdEncription_utils_1.encryptedPWD)(args.password),
                 username: args.username,
                 firstName: args.firstName,
                 lastName: args.lastName
@@ -58,3 +58,58 @@ function creatUser(args, res) {
     });
 }
 exports.creatUser = creatUser;
+/**
+ * @description - This function logins user to sytem, this functions resolves
+ * response and error to client
+ * @param args - Email and password
+ * @param res - The response object
+ * @returns {void} - Returns nothing
+ */
+const login = (args, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield prisma.user.findUnique({
+        where: {
+            email: args.email,
+        },
+        select: {
+            id: true,
+            email: true,
+            username: true,
+            firstName: true,
+            lastName: true,
+            password: true
+        }
+    })
+        .then((user) => {
+        console.log(user);
+        if (!user) {
+            res.status(401).json({
+                message: 'Wrong email or password',
+                codeError: 'WRONG_EMAIL_OR_PASSWORD'
+            });
+        }
+        else {
+            if ((0, pwdEncription_utils_1.decryptedPWD)(user.password, args.password) === false) {
+                res.status(401).json({
+                    message: 'Wrong email or password',
+                    codeError: 'WRONG_EMAIL_OR_PASSWORD'
+                });
+            }
+            else {
+                delete user['password'];
+                res.status(200).json({
+                    message: 'Login successful',
+                    codeError: 'LOGIN_SUCCESSFUL',
+                    user: user,
+                    token: (0, token_utils_1.generateToken)(user.id)
+                });
+            }
+        }
+    })
+        .catch((err) => {
+        res.status(500).json({
+            message: 'Internal server error',
+            codeError: 'INTERNAL_SERVER_ERROR'
+        });
+    });
+});
+exports.login = login;
