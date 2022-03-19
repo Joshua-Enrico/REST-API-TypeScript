@@ -1,3 +1,4 @@
+// not being used, currently using prisma with sql
 import mongoose, { ConnectOptions } from "mongoose";
 import config from "./config/config";
 
