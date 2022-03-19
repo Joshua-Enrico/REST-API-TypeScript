@@ -1,30 +1,23 @@
-import { Response } from 'express';
-// import User from '../../models/user.model';// provide by moongose
-import { encryptedPWD } from '../utils/pwdEncription.service';
-const { PrismaClient } = require('@prisma/client'); // provide by prisma
-const { user } = new PrismaClient();
 
-/**
- * @description - User Arguments type
- */
-type userType = {
-    email: string,
-    password: string,
-    username: string,
-    firstName: string,
-    lastName: string
-}
+// import User from '../../models/user.model';// provide by moongose
+import { encryptedPWD, decryptedPWD } from '../utils/pwdEncription.utils';
+import { loginArgs, userType } from '../utils/types/user.types';
+import { generateToken } from '../utils/token.utils';
+import { Response } from 'express';
+
+const { PrismaClient } = require('@prisma/client'); // provide by prisma
+const prisma = new PrismaClient();
 
 /**
     * @description - This function is used to create a new user
     * and resolve the response to the client
-    * @param {object} req - The request object
+    * @param {object} args - Arguments from the client
     * @param {object} res - The response object
     * @returns {void} - Returns nothing
  */
 async function creatUser(args:userType, res:Response): Promise<void> {
-    console.log(encryptedPWD(args.password));
-    await user.create({
+
+    await prisma.user.create({
         data: {
             email: args.email,
             password: encryptedPWD(args.password),
@@ -58,7 +51,66 @@ async function creatUser(args:userType, res:Response): Promise<void> {
 
 }
 
+/**
+ * @description - This function logins user to sytem, this functions resolves
+ * response and error to client
+ * @param args - Email and password
+ * @param res - The response object
+ * @returns {void} - Returns nothing
+ */
+ const login = async (args:loginArgs, res:Response): Promise<void> => {
+
+    await prisma.user.findUnique({
+        where: {
+            email: args.email,
+        },
+        select: {
+            id: true,
+            email: true,
+            username: true,
+            firstName: true,
+            lastName: true,
+            password: true
+        }
+    })
+    .then((user:any) => {
+
+        if(!user) {
+            res.status(401).json({
+                message: 'Wrong email or password',
+                codeError: 'WRONG_EMAIL_OR_PASSWORD'
+            })
+        }else {
+
+            if(decryptedPWD(user.password, args.password) === false) {
+                res.status(401).json({
+                    message: 'Wrong email or password',
+                    codeError: 'WRONG_EMAIL_OR_PASSWORD'
+                })
+            } else {
+                delete user['password'];
+                res.status(200).json({
+                    message: 'Login successful',
+                    codeError: 'LOGIN_SUCCESSFUL',
+                    user:  user,
+                    token: generateToken(user.id)
+                })
+            }
+        }
+    })
+    .catch((err:any) => {
+
+        res.status(500).json({
+            message: 'Internal server error',
+            codeError: 'INTERNAL_SERVER_ERROR'
+        })
+    })
+
+}
+
+
 
 export {
-    creatUser
+    creatUser,
+    login
 };
