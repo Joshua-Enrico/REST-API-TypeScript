@@ -1,4 +1,9 @@
 
+# API REST - TypeScript and Prisma
+
+This is simple Example of an API rest build on Node.js with TypeScript.
+
+Why TypeScript?, Take a look [Link](https://www.typescriptlang.org/why-create-typescript)
 
 
 ## Tecnologies and tools Used
