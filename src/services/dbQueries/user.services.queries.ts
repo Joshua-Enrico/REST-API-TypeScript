@@ -1,6 +1,6 @@
 
 // import User from '../../models/user.model';// provide by moongose
-import { encryptedPWD, decryptedPWD } from '../utils/pwdEncription.utils';
+import { encryptPWD, decryptPWD } from '../utils/pwdEncription.utils';
 import { loginArgs, userType } from '../utils/types/user.types';
 import { generateToken } from '../utils/token.utils';
 import { Response } from 'express';
@@ -20,7 +20,7 @@ async function creatUser(args:userType, res:Response): Promise<void> {
     await prisma.user.create({
         data: {
             email: args.email,
-            password: encryptedPWD(args.password),
+            password: encryptPWD(args.password),
             username: args.username,
             firstName: args.firstName,
             lastName: args.lastName
@@ -34,7 +34,6 @@ async function creatUser(args:userType, res:Response): Promise<void> {
         }
     })
         .then((result: any) => {
-            console.log(result);
             res.status(201).json({
                 message: "User created successfully",
                 data: result,
@@ -82,7 +81,7 @@ async function creatUser(args:userType, res:Response): Promise<void> {
             })
         }else {
 
-            if(decryptedPWD(user.password, args.password) === false) {
+            if(decryptPWD(user.password, args.password) === false) {
                 res.status(401).json({
                     message: 'Wrong email or password',
                     codeError: 'WRONG_EMAIL_OR_PASSWORD'
