@@ -12,8 +12,9 @@ import { loginVal } from "../../services/validations/user.validations/login.vali
  * @function createUserVal - This function is used to validate the user 
  * @function userExistance - This function is used to check username and 
  * email existence
+ * @returns {Promise<void>} - Returns nothing
  */
-const signUp =  async (req:Request, res:Response) => {
+const signUp =  async (req:Request, res:Response): Promise<void> => {
     let isValid:boolean = true; // isValid is true by default
 
     isValid = createUserVal(req.body, res);
@@ -22,7 +23,15 @@ const signUp =  async (req:Request, res:Response) => {
 
 }
 
-const signIn =  (req:Request, res:Response) => {
+
+/**
+ * @description - Login Controller, login user,
+ * each function called handle the request and response
+ * @param {Resquest} req - The request object 
+ * @param {Response} res - The response object
+ * @returns {void} - Returns nothing 
+ */
+const signIn = (req:Request, res:Response): void => {
     
     let isValid:boolean = true; // isValid is true by default
 
