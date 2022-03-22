@@ -27,7 +27,7 @@ function creatUser(args, res) {
         yield prisma.user.create({
             data: {
                 email: args.email,
-                password: (0, pwdEncription_utils_1.encryptedPWD)(args.password),
+                password: (0, pwdEncription_utils_1.encryptPWD)(args.password),
                 username: args.username,
                 firstName: args.firstName,
                 lastName: args.lastName
@@ -41,7 +41,6 @@ function creatUser(args, res) {
             }
         })
             .then((result) => {
-            console.log(result);
             res.status(201).json({
                 message: "User created successfully",
                 data: result,
@@ -80,7 +79,6 @@ const login = (args, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     })
         .then((user) => {
-        console.log(user);
         if (!user) {
             res.status(401).json({
                 message: 'Wrong email or password',
@@ -88,7 +86,7 @@ const login = (args, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         else {
-            if ((0, pwdEncription_utils_1.decryptedPWD)(user.password, args.password) === false) {
+            if ((0, pwdEncription_utils_1.decryptPWD)(user.password, args.password) === false) {
                 res.status(401).json({
                     message: 'Wrong email or password',
                     codeError: 'WRONG_EMAIL_OR_PASSWORD'

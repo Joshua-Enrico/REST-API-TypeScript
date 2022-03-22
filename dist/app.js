@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
+const post_routes_1 = __importDefault(require("./routes/post.routes"));
 // Initialitations
 const app = (0, express_1.default)();
 // settings
@@ -21,4 +22,5 @@ app.get('/', (req, res) => {
     res.send(`API is at http://localhost:${app.get('port')}`);
 });
 app.use('/api/auth', auth_routes_1.default);
+app.use('/api/post', post_routes_1.default);
 exports.default = app;
