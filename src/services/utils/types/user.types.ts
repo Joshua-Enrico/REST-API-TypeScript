@@ -17,7 +17,18 @@
     lastName: string
 }
 
+/**
+ * @description - Post Arguments type
+ */
+type postType = {
+    title: string,
+    content: string,
+    authorId: string
+}
+
+
 export{
     loginArgs,
-    userType
+    userType,
+    postType
 }

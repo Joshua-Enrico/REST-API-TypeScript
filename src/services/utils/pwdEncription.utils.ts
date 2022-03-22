@@ -4,7 +4,7 @@ const CryptoJs = require('crypto-js');
  * @param pwd - The password to encrypt
  * @returns {string} - The encrypted password
  */
-const encryptedPWD = (pwd: string): string => {
+const encryptPWD = (pwd: string): string => {
     console.log(process.env.SALT);
     const encrypted = CryptoJs.AES.encrypt(pwd, process.env.SALT);
     return encrypted.toString();
@@ -15,7 +15,7 @@ const encryptedPWD = (pwd: string): string => {
  * @param pwd - The password to decrypt
  * @returns decryptedPWD - The decrypted password
  */
-const decryptedPWD = (encrypted:string, pwd: string): boolean => {
+const decryptPWD = (encrypted:string, pwd: string): boolean => {
     let isValidL: boolean = true;
 
     const decrypted = CryptoJs.AES.decrypt(encrypted, process.env.SALT).toString(CryptoJs.enc.Utf8);
@@ -25,6 +25,6 @@ const decryptedPWD = (encrypted:string, pwd: string): boolean => {
 }
 
 export {
-    encryptedPWD,
-    decryptedPWD
+    encryptPWD,
+    decryptPWD
 }
