@@ -5,8 +5,8 @@ const prisma: typeof PrismaClient = new PrismaClient();
 
 /**
  * @description - This function is used to validate the user arguments
- * @param args - Arguments to validate
- * @param res - The response object
+ * @param {object} args - Arguments to validate
+ * @param {Response} res - The response object
  * @returns {boolean} - Returns true if the validation is successful
  */
 const createUserVal = (args:object, res:Response): boolean => {
@@ -48,10 +48,12 @@ const createUserVal = (args:object, res:Response): boolean => {
 }
 
 /**
- * 
- * @param email - The email to validate
- * @param name - The name to validate
- * @returns 
+ * @description - This functions validates is username or email has 
+ * already been taken
+ * @param {string} email - The email to validate
+ * @param {string} username - The name to validate
+ * @param {Response} res - The response object
+ * @returns {boolean} - Returns true if the validation is successful
  */
 const userExistance = async (email:string, username:string, res:Response): Promise<boolean> => {
     let valid:boolean = true;
