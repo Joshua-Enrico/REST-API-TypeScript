@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 
 import authRoutes from './routes/auth.routes';
+import postRoutes from './routes/post.routes';
 
 // Initialitations
 const app = express();
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/auth', authRoutes);
+app.use('/api/post', postRoutes);
 
 
 export default app;
